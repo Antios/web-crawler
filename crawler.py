@@ -9,18 +9,28 @@ def main():
     baseURL = input('Enter URL to crawl: ')
     URLSHash = {}
 
-    urlSearch(baseURL, URLSHash)
     siteMapSearch(baseURL, URLSHash)
+    urlSearch(baseURL, URLSHash)
+
+def cleanURL(baseURL, tag):
+    link = tag.get('href')
+    if link[0] == '/':
+        link = baseURL + link
+    link = link.replace('www.', '')
+    return link
 
 def urlSearch(baseURL, URLSHash):
     reqs = requests.get(baseURL)
     soup = BeautifulSoup(reqs.text, 'html.parser')
 
-    for link in soup.find_all('a'):
-        if link not in URLSHash:
+    for tag in soup.find_all('a'):
+        link = cleanURL(baseURL, tag)
+        if link not in URLSHash and link != '#':
             print(Fore.YELLOW + "[url] ", end='')
             print(Style.RESET_ALL, end='')
-            print(link.get('href'))
+            link = link
+            print(link)
+            URLSHash[link] = link
         else:
             URLSHash[link] = link
 
@@ -33,8 +43,9 @@ def siteMapSearch(baseURL, URLSHash):
             print(Fore.BLUE + "[sitemap] ", end='')
             print(Style.RESET_ALL, end='')
             print(url)
+            URLSHash[url] = url
         else:
-             URLSHash[url] = url
+            URLSHash[url] = url
 
 
 if __name__ == "__main__":
