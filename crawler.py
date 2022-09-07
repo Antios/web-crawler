@@ -14,7 +14,7 @@ def main():
 
 def cleanURL(baseURL, tag):
     link = tag.get('href')
-    if link[0] == '/':
+    if not not link and link[0] == '/':
         link = baseURL + link
     link = link.replace('www.', '')
     return link
